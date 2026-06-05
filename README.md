@@ -30,25 +30,15 @@ Copy `CLAUDE.md`, `load-env.sh`, and `save-env.sh` from this repo into it.
 
 Open the folder in Claude Code. It will read `CLAUDE.md` and know to source `load-env.sh` each session.
 
-### Step 3 — Install and authenticate `gh` in Claude Code
+### Step 3 — Install `gh`, authenticate, and save your token
 
-Ask Claude:
+In Claude Code, ask Claude:
 
-> "Install gh CLI and walk me through authenticating it"
+> "Install gh, run gh auth login and walk me through it, then run save-env.sh"
 
-Claude will install `gh` and guide you through `gh auth login` interactively (browser-based OAuth).
+Claude will install the `gh` CLI, guide you through the interactive browser-based OAuth flow (`gh auth login`), then run `save-env.sh` — which writes `.env` with your GitHub token and `./bin` on the PATH.
 
-### Step 4 — Run `save-env.sh` in Claude Code
-
-Once `gh` is authenticated:
-
-```bash
-./save-env.sh
-```
-
-This writes `.env` with your GitHub token and `./bin` on the PATH.
-
-### Step 5 — Open the folder in Cowork
+### Step 4 — Open the folder in Cowork
 
 Open the Claude desktop app in Cowork mode and select your context hub folder.
 
@@ -58,13 +48,13 @@ Tell Claude:
 
 Claude will download the `gh` binary for the sandbox and save it to `./bin/gh`.
 
-### Step 6 — Commit and push to a private repo
+### Step 5 — Commit and push to a private repo
 
 Tell Cowork:
 
 > "Git init, add all files, commit, then create a private GitHub repo for this context hub and push to origin main"
 
-### Step 7 — Test it
+### Step 6 — Test it
 
 Open a **new** Cowork chat in your context hub folder and ask:
 
