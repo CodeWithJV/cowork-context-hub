@@ -1,32 +1,44 @@
-# Cowork Context Hub
+# Cowork Context Hub — Reference Setup
 
-A reference setup that gives both **Claude Code** (terminal) and **Cowork** (Claude desktop) access to GitHub via a shared `.env` and a local `gh` binary in `./bin`.
-
-## How it works
-
-- `save-env.sh` — run in Claude Code; reads your authenticated `gh` token from the host keyring and writes `.env`
-- `load-env.sh` — run in Cowork at the start of each session; sources `.env` to export `GH_TOKEN` and add `./bin` to `PATH`
-- `bin/gh` — the `gh` binary installed by Cowork, persisted here so it survives sandbox resets
+This is a **reference repo**. Read this README to set up your own context hub folder — don't copy this repo wholesale. Your hub only needs a handful of files (listed below).
 
 ---
 
-## First-time setup
+## What you're building
 
-### Step 1 — Open the folder in Claude Code
+A local folder that gives both **Claude Code** (terminal) and **Cowork** (Claude desktop) access to GitHub, via a shared `.env` and a local `gh` binary in `./bin`.
 
-Clone or create this folder locally and open it in Claude Code.
+| File | Purpose |
+|------|---------|
+| `CLAUDE.md` | Tells Claude to source `load-env.sh` on every session start |
+| `save-env.sh` | Reads your `gh` token from the host keyring and writes `.env` — run in Claude Code |
+| `load-env.sh` | Sources `.env` to export `GH_TOKEN` and add `./bin` to `PATH` — run in Cowork |
+| `bin/gh` | `gh` binary for Cowork's Linux sandbox (arm64), saved here to survive sandbox resets |
+| `.env` | Generated, gitignored — contains your GitHub token, never committed |
 
-Claude Code will read `CLAUDE.md` and know to source `load-env.sh` each session.
+---
 
-### Step 2 — Install and authenticate `gh` in Claude Code
+## Setup
 
-In the Claude Code terminal, ask Claude:
+### Step 1 — Create your context hub folder
+
+Make a new empty folder on your machine (e.g. `~/my-context-hub`). You'll open this in both Claude Code and Cowork.
+
+Copy `CLAUDE.md`, `load-env.sh`, and `save-env.sh` from this repo into it.
+
+### Step 2 — Open the folder in Claude Code
+
+Open the folder in Claude Code. It will read `CLAUDE.md` and know to source `load-env.sh` each session.
+
+### Step 3 — Install and authenticate `gh` in Claude Code
+
+Ask Claude:
 
 > "Install gh CLI and walk me through authenticating it"
 
-Claude will run the install and guide you through `gh auth login` interactively (browser-based OAuth).
+Claude will install `gh` and guide you through `gh auth login` interactively (browser-based OAuth).
 
-### Step 3 — Run `save-env.sh` in Claude Code
+### Step 4 — Run `save-env.sh` in Claude Code
 
 Once `gh` is authenticated:
 
@@ -34,39 +46,31 @@ Once `gh` is authenticated:
 ./save-env.sh
 ```
 
-This writes `.env` with your token and the `./bin` path. The `.env` file is gitignored — it stays local only.
+This writes `.env` with your GitHub token and `./bin` on the PATH.
 
-### Step 4 — Open the folder in Cowork
+### Step 5 — Open the folder in Cowork
 
-Open the Claude desktop app in Cowork mode and select this folder.
+Open the Claude desktop app in Cowork mode and select your context hub folder.
 
 Tell Claude:
 
 > "Install gh and save it to the local bin file"
 
-Claude will download the `gh` binary for the sandbox architecture and save it to `./bin/gh`. This file is committed to the repo so it persists.
+Claude will download the `gh` binary for the sandbox and save it to `./bin/gh`.
 
-### Step 5 — Git init and initial commit
-
-Tell Cowork:
-
-> "Git init, add all files, and make an initial commit"
-
-### Step 6 — Create the GitHub repo and push
+### Step 6 — Commit and push to a private repo
 
 Tell Cowork:
 
-> "Create a private GitHub repo for this context hub and push to origin main"
-
-Claude will use `gh repo create` with your loaded token to create the repo and push.
+> "Git init, add all files, commit, then create a private GitHub repo for this context hub and push to origin main"
 
 ### Step 7 — Test it
 
-Open a **new** Cowork chat in this project folder and ask:
+Open a **new** Cowork chat in your context hub folder and ask:
 
 > "Run load-env.sh and then do a git pull"
 
-If it succeeds, your setup is working end-to-end.
+If it succeeds, you're set up end-to-end.
 
 ---
 
@@ -74,27 +78,6 @@ If it succeeds, your setup is working end-to-end.
 
 **In Claude Code:** `CLAUDE.md` reminds Claude to source `load-env.sh` automatically.
 
-**In Cowork:** At the start of each session, tell Claude:
+**In Cowork:** At the start of each session tell Claude "run load-env.sh", or it picks it up from `CLAUDE.md`.
 
-> "Run load-env.sh"
-
-Or Claude will do it automatically when it reads `CLAUDE.md`.
-
-**Token rotation:** GitHub tokens expire periodically. When they do, open Claude Code and re-run:
-
-```bash
-./save-env.sh
-```
-
----
-
-## Files
-
-| File | Purpose |
-|------|---------|
-| `CLAUDE.md` | Instructs Claude (Code + Cowork) to load env on session start |
-| `README.md` | This setup guide |
-| `save-env.sh` | Writes `.env` from `gh auth token` — run in Claude Code |
-| `load-env.sh` | Sources `.env` — run in Cowork each session |
-| `bin/gh` | `gh` binary for Cowork's Linux sandbox (arm64) |
-| `.env` | Generated, gitignored — contains your GitHub token |
+**Token rotation:** When your token expires, open Claude Code and re-run `./save-env.sh`.
